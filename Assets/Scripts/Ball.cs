@@ -11,9 +11,14 @@ public class Ball : MonoBehaviour
     // state
     Vector2 paddleToBallDistance;
 
+    // cached component references
+
+    AudioSource myAudioSource;
+
     // velocity params
     [SerializeField] float horVelocity = 5;
     [SerializeField] float vertVelocity = 5;
+    [SerializeField] AudioClip[] ballSounds;
 
     bool hasStarted = false;
 
@@ -24,6 +29,7 @@ public class Ball : MonoBehaviour
     void Start()
     {
         paddleToBallDistance = (transform.position - paddle1.transform.position);
+        myAudioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -44,6 +50,7 @@ public class Ball : MonoBehaviour
         {
             hasStarted = true;
             GetComponent<Rigidbody2D>().velocity = new Vector2(horVelocity, vertVelocity);
+
         }
     }
 
@@ -53,4 +60,17 @@ public class Ball : MonoBehaviour
         Vector2 paddlePos = new Vector2(paddle1.transform.position.x, paddle1.transform.position.y);
         transform.position = paddlePos + paddleToBallDistance;
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (hasStarted)
+        {
+            AudioClip clip = ballSounds[UnityEngine.Random.Range(0, ballSounds.Length)];
+
+            myAudioSource.PlayOneShot(clip);
+
+        }
+        
+    }
+
 }
